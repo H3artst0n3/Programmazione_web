@@ -21,12 +21,26 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-router.get('/users', async (req, res) => {
+// router.get('/users', async (req, res) => {
+//   try {
+//       const mongo = await db.connect2db();
+//       console.log("Connesso al database");
+//       console.log("ciao")
+//       const cursor = await mongo.collection("users").find();
+//       const users = await cursor.toArray();
+//       res.json(users);
+//   } catch (error) {
+//       console.error("Errore:", error);
+//       res.status(500).json({ message: "Errore interno del server" });
+//   }
+// })
+
+router.get('/users/:id', async (req, res) => {
   try {
       const mongo = await db.connect2db();
       console.log("Connesso al database");
-      const cursor = await mongo.collection("users").find();
-      const users = await cursor.toArray();
+      const id = {id: parseInt(req.params.id)};
+      const users = await mongo.collection("users").findOne(id);
       res.json(users);
   } catch (error) {
       console.error("Errore:", error);
@@ -34,12 +48,15 @@ router.get('/users', async (req, res) => {
   }
 });
 
-router.get('/users/:username', async (req, res) => {
+router.get('/users/', async (req, res) => {
   try {
       const mongo = await db.connect2db();
       console.log("Connesso al database");
-      const username = {username: req.params.username};
-      const users = await mongo.collection("users").findOne(username);
+      const query = {cognome: req.query.q};
+      console.log(query)
+      const cursor = await mongo.collection("users").find(query);
+      const users = await cursor.toArray();
+      console.log(users)
       res.json(users);
   } catch (error) {
       console.error("Errore:", error);

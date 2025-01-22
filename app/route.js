@@ -26,51 +26,6 @@ router.get('/auctions', async (req, res) => {
   res.json(auctions);
 });
 
-router.post('/nuova_asta', verifyToken, async (req, res) => {
-  const mongo = await db.connect2db();  
-  let {titolo_asta, desc_asta, scadenza, offerta_iniziale} = req.body;
-  let asta = {titolo_asta, desc_asta, scadenza, offerta_iniziale};
-  console.log(asta);
-  mongo.collection('auctions').insertOne(asta);
-  // mongo.getAuctionsCollection().insertOne(asta);
-
-  console.log('Nuova asta aggiunta con successo!');
-});
-
-router.delete('/auctions/:id', async (req, res) => { 
-  const mongo = await db.connect2db();
-  // let query = {titolo: req.params.id};
-  await mongo.collection('auctions').deleteOne({_id: req.params.id});
-  console.log('Asta eliminata con successo!');  
-});
-
-router.get('/users', async (req, res) => {
-  const mongo = await db.connect2db();
-  console.log("messaggio")
-  const prova = await mongo.collection("users").find();
-  res.json(prova)
-});
-
-router.get('/users/:username', async (req, res) => {
-  const mongo = await db.connect2db();
-  let del_user = req.params.username;
-  console.log(del_user)
-  let query = {username: del_user};
-  console.log(query)
-
-  const prova = await mongo.collection("users").findOne(query);
-  res.json(prova)
-});
-
-router.delete('/users/:username', async (req, res) => {
-  const mongo = await db.connect2db();
-  let username = req.query.del_user;
-  console.log(username)
-  let query = {username: username};
-  console.log(query)
-
-  await mongo.collection("users").deleteOne(query);
-});
 
 router.use(verifyToken, express.static('private'));
 
