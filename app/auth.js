@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const db = require("./db.js");
 const router = express.Router();
 
-router.post('/register', async (req, res) => {
+router.post('/signup', async (req, res) => {
   try {
     const mongo = await db.connect2db();
 
@@ -29,7 +29,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/signin', async (req, res) => {
   try{
     const mongo = await db.connect2db();
     const { username, password } = req.body;

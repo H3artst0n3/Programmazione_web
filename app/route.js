@@ -44,6 +44,12 @@ router.delete('/auctions/:id', async (req, res) => {
   console.log('Asta eliminata con successo!');  
 });
 
+router.get('/users', async (req, res) => {
+  const mongo = await db.connect2db();
+  console.log("messaggio")
+  const prova = await mongo.collection("users").find();
+  res.json(prova)
+});
 
 router.get('/users/:username', async (req, res) => {
   const mongo = await db.connect2db();
