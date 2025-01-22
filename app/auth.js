@@ -39,7 +39,7 @@ router.post('/signin', async (req, res) => {
       const data = { id: user.id };
       const token = jwt.sign(data, "ssshhh");
       res.cookie("token", token, {httpOnly: true});
-      res.redirect('/private/aste.html')
+      res.redirect('/aste.html')
     } else {
       res.status(401).json({ msg: "Username o password errati" });
     }
