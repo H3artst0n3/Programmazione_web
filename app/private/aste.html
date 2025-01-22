@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <form method="post" action="/nuova_asta">
+    <form method="post" action="api/route/nuova_asta">
       <label for="titolo_asta">Titolo:</label>
       <input type="text" id="titolo_asta" name="titolo_asta"/>
       <label for="desc_asta">Descrizione asta:</label>
@@ -16,10 +16,5 @@
       <input type="number" id="offerta_iniziale" name="offerta_iniziale" min="0"/>
       <input type="submit" value="Crea asta"/>
     </form>
-    <form action="/auctions/:id" method="delete">
-      <label for="itemId">Enter Item ID to Delete:</label>
-      <input type="text" id="itemId" name="itemId" required>
-      <button type="submit">Delete</button>
-  </form>
   </body>
 </html>

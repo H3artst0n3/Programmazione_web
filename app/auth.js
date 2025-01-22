@@ -22,7 +22,6 @@ router.post('/register', async (req, res) => {
       await mongo.collection("users").insertOne(new_user);
       
       res.send("Registrazione effettuata con successo!");
-      res.redirect("/public/login.html")
     }
   } catch (error) {
     console.log(error);
@@ -40,11 +39,9 @@ router.post('/login', async (req, res) => {
       const data = { id: user.id };
       const token = jwt.sign(data, "ssshhh");
       res.cookie("token", token, {httpOnly: true});
-      res.json({ msg: "Autenticazione avvenuta con successo" });
-      res.redirect("/private/aste.html")
+      res.redirect('/private/aste.html')
     } else {
       res.status(401).json({ msg: "Username o password errati" });
-      res.redirect("/public/login.html")
     }
   } catch (error) {
     res.status(500).json({ msg: "Internal Error" });

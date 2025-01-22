@@ -26,7 +26,7 @@ router.get('/auctions', async (req, res) => {
   res.json(auctions);
 });
 
-router.post('/nuova_asta', async (req, res) => {
+router.post('/nuova_asta', verifyToken, async (req, res) => {
   const mongo = await db.connect2db();  
   let {titolo_asta, desc_asta, scadenza, offerta_iniziale} = req.body;
   let asta = {titolo_asta, desc_asta, scadenza, offerta_iniziale};
@@ -65,5 +65,7 @@ router.delete('/users/:username', async (req, res) => {
 
   await mongo.collection("users").deleteOne(query);
 });
+
+router.use(verifyToken, express.static('private'));
 
 module.exports = router;
