@@ -7,8 +7,8 @@ router.post('/signup', async (req, res) => {
   try {
     const mongo = await db.connect2db();
 
-    let { nome, cognome, username, password } = req.body;
-    let user = await mongo.collection("users").findOne({ username: new RegExp(`^${username}$`, 'i') });
+    const { nome, cognome, username, password } = req.body;
+    const user = await mongo.collection("users").findOne({ username: new RegExp(`^${username}$`, 'i') });
     
     if (user) {
       res.status(409).json({msg: "Utente già registrato"})
