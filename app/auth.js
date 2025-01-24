@@ -3,6 +3,23 @@ const jwt = require("jsonwebtoken");
 const db = require("./db.js");
 const router = express.Router();
 
+const verifyToken = (req, res, next) => {
+  const token = req.cookies["token"];
+  if (!token){
+    res.status(403).send("Autenticazione fallita")
+    return;
+  }
+
+  try{
+    const decoded = jwt.verify(token, "ssshhh");
+    req.userId = decoded.id;
+    next();
+  } catch(error) {
+    res.status(401).send("Non autorizzato!");
+  }
+};
+
+
 router.post('/signup', async (req, res) => {
   try {
     const mongo = await db.connect2db();
@@ -48,4 +65,4 @@ router.post('/signin', async (req, res) => {
   }
 });
     
-module.exports = router;
+module.exports = { router, verifyToken };

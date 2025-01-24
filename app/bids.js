@@ -1,25 +1,8 @@
+const { verifyToken } = require("./auth.js");
 const express = require("express");
 const moment = require('moment');
-const jwt = require("jsonwebtoken");
-const router = express.Router();
 const db = require("./db.js");
-
-
-const verifyToken = (req, res, next) => {
-  const token = req.cookies["token"];
-  if (!token){
-    res.status(403).send("Autenticazione fallita");
-    return;
-  }
-
-  try{
-    const decoded = jwt.verify(token, "ssshhh");
-    req.userId = decoded.id;
-    next();
-  } catch(error) {
-    res.status(401).send("Non autorizzato!");
-  }
-};
+const router = express.Router();
 
 router.get("/auctions/:id/bids", async (req, res) => {
   try {

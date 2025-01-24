@@ -1,27 +1,7 @@
+const { verifyToken } = require("./auth.js");
 const express = require("express");
-const router = express.Router();
-const jwt = require("jsonwebtoken");
 const db = require("./db.js");
-
-const verifyToken = (req, res, next) => {
-  console.log("cookies nella richiesta: ", req.cookies)
-  const token = req.cookies["token"];
-  if (!token){
-    console.log("Token non presente");
-    res.status(403).send("Autenticazione fallita")
-    return;
-  }
-
-  try{
-    const decoded = jwt.verify(token, "ssshhh");
-    req.userId = decoded.id;
-    console.log("Token verificato, req.userId: ", req.userId);
-    next();
-  } catch(error) {
-    console.log("errore nella verifica", error);
-    res.status(401).send("Non autorizzato!");
-  }
-};
+const router = express.Router();
 
 router.get('/users/:id', async (req, res) => {
   try {
