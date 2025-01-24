@@ -1,4 +1,5 @@
 const express = require("express");
+const moment = require('moment');
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 const db = require("./db.js");
@@ -32,8 +33,12 @@ router.post('/auctions', verifyToken, async (req, res) => {
       
       let id = last_auction?.id !== undefined ? last_auction.id: -1;
       id++;
-      
-      const new_auction = {id, proprietario: req.userId, titolo_asta, desc_asta, scadenza, offerta_iniziale};
+
+
+      const date = moment(scadenza);
+      const result = date.format('DD/MM/YYYY');
+
+      const new_auction = {id, proprietario: req.userId, titolo_asta, desc_asta, scadenza: result, offerta_iniziale};
       await mongo.collection('auctions').insertOne(new_auction);
       res.send("Nuova asta aggiunta con successo!")
     }
@@ -45,28 +50,28 @@ router.post('/auctions', verifyToken, async (req, res) => {
 
 router.get('/auctions/', async (req, res) => {
   try {
-      const mongo = await db.connect2db();
-      console.log("Connesso al database");
-      const query = {titolo_asta: { "$regex": req.query.q, "$options": "i" }};
-      const cursor = await mongo.collection("auctions").find(query);
-      const auctions = await cursor.toArray();
-      res.json(auctions);
+    const mongo = await db.connect2db();
+    console.log("Connesso al database");
+    const query = req.query.q ? {titolo_asta: { "$regex": req.query.q, "$options": "i" }} : {};
+    const cursor = await mongo.collection("auctions").find(query);
+    const auctions = await cursor.toArray();
+    res.json(auctions);
   } catch (error) {
-      console.error("Errore:", error);
-      res.status(500).json({ message: "Errore interno del server" });
+    console.error("Errore:", error);
+    res.status(500).json({ message: "Errore interno del server" });
   }
 });
 
 router.get('/auctions/:id', async (req, res) => {
   try {
-      const mongo = await db.connect2db();
-      console.log("Connesso al database");
-      const id = {id: parseInt(req.params.id)};
-      const auction = await mongo.collection("auctions").findOne(id);
-      res.json(auction);
+    const mongo = await db.connect2db();
+    console.log("Connesso al database");
+    const id = {id: parseInt(req.params.id)};
+    const auction = await mongo.collection("auctions").findOne(id);
+    res.json(auction);
   } catch (error) {
-      console.error("Errore:", error);
-      res.status(500).json({ message: "Errore interno del server" });
+    console.error("Errore:", error);
+    res.status(500).json({ message: "Errore interno del server" });
   }
 });
 
@@ -130,5 +135,3 @@ router.delete('/auctions/:id', verifyToken, async (req, res) => {
 });
 
 module.exports = router;
-
-// curl -X DELETE http://localhost:3000/api/auctions/3 --cookie "token=tuo_token_valido"
