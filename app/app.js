@@ -1,8 +1,8 @@
 const express = require('express');
 const cookieParser = require("cookie-parser");
 const { router: auth} = require("./auth.js");
-const users = require("./users.js");
 const auctions = require("./auctions.js");
+const users = require("./users.js");
 const bids = require("./bids.js");
 const app = express();
 
@@ -15,8 +15,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", auth);
-app.use("/api/", users);
 app.use("/api/", auctions);
+app.use("/api/", users);
 app.use("/api/", bids);
 
 app.listen(3000, () => {

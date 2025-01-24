@@ -64,5 +64,11 @@ router.post('/signin', async (req, res) => {
     res.status(500).json({ msg: "Internal Error" });
   }
 });
+
+router.get('/logout', (req, res) => {
+  res.clearCookie("token", {httpOnly: true});
+  console.log("Logout effettuato con successo");
+  res.json({ msg: "Logout effettuato con successo" });
+});
     
 module.exports = { router, verifyToken };

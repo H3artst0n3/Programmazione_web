@@ -37,10 +37,10 @@ router.get("/whoami", verifyToken, async (req, res) => {
     const mongo = await db.connect2db();
     const query = {id: req.userId}
     const user = await mongo.collection("users").findOne(query);
-    console.log(user)
-    // if (!req.userId){
-    //   res.status(404).json({ msg: "Utente non loggato" });
-    // }
+
+    if (req.userId == null){
+      res.status(404).json({ msg: "Utente non loggato" });
+    }
 
     if (user) {
       res.json(user);
