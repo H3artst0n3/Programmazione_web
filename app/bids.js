@@ -1,4 +1,5 @@
 const { verifyToken } = require("./auth.js");
+const { isAuctionExpired } = require("./auctions.js");
 const express = require("express");
 const moment = require('moment');
 const db = require("./db.js");
@@ -41,9 +42,9 @@ router.post("/auctions/:id/bids", verifyToken, async (req, res) => {
   console.log("Bid: ", bid, "Offerta: ", offerta);
 
   const current = moment(new Date());
-  const date = current.format('DD/MM/YYYY');
+  const date = current.format('DD-MM-YYYY');
 
-  if (date >= asta.scadenza) {
+  if (isAuctionExpired(date, asta.scadenza)) {
     return res.status(400).send("L'asta è scaduta");
   }
 
@@ -56,8 +57,9 @@ router.post("/auctions/:id/bids", verifyToken, async (req, res) => {
     let id = last_bid?.id !== undefined ? last_bid.id: -1;
     id++;
 
-    const new_bid = {id, asta: parseInt(req.params.id), proprietario: req.userId, offerta, data: date};
+    const new_bid = {id, asta: parseInt(req.params.id), offerente: req.userId, offerta, data: date};
     await mongo.collection('bids').insertOne(new_bid);
+    await mongo.collection('auctions').updateOne(query, {$set : {offertaCorrente: offerta, vincitore: req.userId}});
     res.status(200).send("Nuova offerta inviata!")
   }
 });

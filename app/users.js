@@ -1,4 +1,5 @@
 const { verifyToken } = require("./auth.js");
+const { isAuctionExpired } = require("./auctions.js");
 const express = require("express");
 const db = require("./db.js");
 const router = express.Router();
@@ -8,13 +9,26 @@ router.get('/users/:id', async (req, res) => {
       const mongo = await db.connect2db();
       console.log("Connesso al database");
       const id = {id: parseInt(req.params.id)};
-      const users = await mongo.collection("users").findOne(id);
-      res.json(users);
+      const user = await mongo.collection("users").findOne(id);
+      const current = moment(new Date());
+      const date = current.format('DD-MM-YYYY');
+      const auctions = await mongo.collection('auctions').find({vincitore: user.id}).toArray();
+      const asteVinte = auctions.filter(isAuctionExpired(date, auctions.scadenza));
+      const userDetails = {
+        username: user.username,
+        asteVinte: asteVinte.map(asta => ({
+          titolo: asta.titolo_asta,
+          descrizione: asta.desc_asta,
+          offertaIniziale: offerta_iniziale,
+          prezzoFinale: asta.offertaCorrente
+        }))        
+      }
+      res.json(userDetails);
   } catch (error) {
       console.error("Errore:", error);
       res.status(500).json({ message: "Errore interno del server" });
   }
-});
+})
 
 router.get('/users/', async (req, res) => {
   try {

@@ -4,6 +4,15 @@ const moment = require('moment');
 const db = require("./db.js");
 const router = express.Router();
 
+const isAuctionExpired = (currentDate, auctionEndDate) => {
+  const [currentDay, currentMonth, currentYear] = currentDate.split('-');
+  const [endDay, endMonth, endYear] = auctionEndDate.split('-');
+
+  return parseInt(currentYear) > parseInt(endYear) ||
+  (parseInt(currentYear) === parseInt(endYear) && parseInt(currentMonth) > parseInt(endMonth)) ||
+  (parseInt(currentYear) === parseInt(endYear) && parseInt(currentMonth) === parseInt(endMonth) && parseInt(currentDay) > parseInt(endDay));
+};
+
 router.post('/auctions', verifyToken, async (req, res) => {
   try {
     const mongo = await db.connect2db();  
@@ -19,9 +28,11 @@ router.post('/auctions', verifyToken, async (req, res) => {
       id++;
 
       const date = moment(scadenza);
-      const result = date.format('DD/MM/YYYY');
+      const result = date.format('DD-MM-YYYY');
 
-      const new_auction = {id, proprietario: req.userId, titolo_asta, desc_asta, scadenza: result, offerta_iniziale};
+      const profiloProprietario = await mongo.collection('users').findOne({id: req.userId})
+
+      const new_auction = {id, proprietario: profiloProprietario.username, titolo_asta, desc_asta, scadenza: result, offerta_iniziale};
       await mongo.collection('auctions').insertOne(new_auction);
       res.send("Nuova asta aggiunta con successo!")
     }
@@ -49,9 +60,14 @@ router.get('/auctions/:id', async (req, res) => {
   try {
     const mongo = await db.connect2db();
     console.log("Connesso al database");
-    const id = {id: parseInt(req.params.id)};
-    const auction = await mongo.collection("auctions").findOne(id);
-    res.json(auction);
+    const ID = parseInt(req.params.id);
+    const auction = await mongo.collection("auctions").findOne({id: ID});
+
+    if (!auction) {
+      return res.status(404).send("Asta non trovata")
+    }
+
+    res.json(auction)
   } catch (error) {
     console.error("Errore:", error);
     res.status(500).json({ message: "Errore interno del server" });
@@ -117,4 +133,5 @@ router.delete('/auctions/:id', verifyToken, async (req, res) => {
   }
 });
 
-module.exports = router;
+// module.exports = router;
+module.exports = { router, isAuctionExpired };

@@ -1,7 +1,7 @@
 const express = require('express');
 const cookieParser = require("cookie-parser");
 const { router: auth} = require("./auth.js");
-const auctions = require("./auctions.js");
+const { router: auctions} = require("./auctions.js");
 const users = require("./users.js");
 const bids = require("./bids.js");
 const app = express();
