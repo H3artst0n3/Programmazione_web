@@ -6,8 +6,9 @@ const router = express.Router();
 const verifyToken = (req, res, next) => {
   const token = req.cookies["token"];
   if (!token){
-    res.status(403).send("Autenticazione fallita")
-    return;
+    // res.status(403).send("Autenticazione fallita")
+    req.userId = null;
+    return next();
   }
 
   try{
@@ -15,7 +16,8 @@ const verifyToken = (req, res, next) => {
     req.userId = decoded.id;
     next();
   } catch(error) {
-    res.status(401).send("Non autorizzato!");
+    req.userId = null;
+    next();
   }
 };
 
@@ -28,7 +30,7 @@ router.post('/signup', async (req, res) => {
     const user = await mongo.collection("users").findOne({ username: new RegExp(`^${username}$`, 'i') });
     
     if (user) {
-      res.status(409).json({msg: "Utente già registrato"})
+      return res.status(409).json({msg: "Username già registrato"})
     } else {
       const last_user = await mongo.collection("users").findOne({}, {sort: {id: -1}} );
       
@@ -38,11 +40,11 @@ router.post('/signup', async (req, res) => {
       const new_user = {id, nome, cognome, username, password};
       await mongo.collection("users").insertOne(new_user);
       
-      res.send("Registrazione effettuata con successo!");
+      return res.json({msg: "Registrazione effettuata con successo!"});
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({msg: "Internal Error"});
+    return res.status(500).json({msg: "Internal Error"});
   }
 });
 
@@ -56,12 +58,12 @@ router.post('/signin', async (req, res) => {
       const data = { id: user.id };
       const token = jwt.sign(data, "ssshhh");
       res.cookie("token", token, {httpOnly: true});
-      res.redirect('/aste.html')
+      return res.redirect('/aste.html')
     } else {
-      res.status(401).json({ msg: "Username o password errati" });
+      return res.status(401).json({ msg: "Username o password errati" });
     }
   } catch (error) {
-    res.status(500).json({ msg: "Internal Error" });
+    return res.status(500).json({ msg: "Internal Error" });
   }
 });
 
