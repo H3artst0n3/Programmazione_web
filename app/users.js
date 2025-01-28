@@ -40,7 +40,7 @@ router.get('/users/:id', async (req, res) => {
 
       const userDetails = await asteVinte(user.username);
 
-      res.json(userDetails);
+      res.status(200).json(userDetails);
   } catch (error) {
       console.error("Errore:", error);
       res.status(500).json({ msg: "Errore interno del server" });
@@ -62,8 +62,7 @@ router.get('/users/', async (req, res) => {
         usersDetails.push(aste);
       }
 
-      console.log(usersDetails)
-      res.json(usersDetails);
+      res.status(200).json(usersDetails);
   } catch (error) {
       console.error("Errore:", error);
       res.status(500).json({ msg: "Errore interno del server" });
@@ -77,8 +76,7 @@ router.get("/whoami", verifyToken, async (req, res) => {
     const user = await mongo.collection("users").findOne(query);
 
     if (req.userId === null){
-      return res.redirect('/login.html');
-      // return res.status(404).json({ msg: "Utente non loggato" });
+      return res.status(301).redirect('/login.html');
     }
 
     if (user) {

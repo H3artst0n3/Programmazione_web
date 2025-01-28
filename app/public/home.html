@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interfaccia Registrazione e Asta</title>
+  <link href="assets/css/style.css" rel="stylesheet"/>
+  <script src="assets/js/login.js" defer></script>
+</head>
+<body>
+  <div class="grid-container">
+    <div class="container" id="registration-container">
+      <h2>Registrazione</h2>
+      <form id="registration-form" method="post" action="api/auth/signup">
+        <label for="registration-name">Nome</label>
+        <input type="text" name="nome" id="registration-name" placeholder="Inserisci il tuo nome" required>
+
+        <label for="registration-surname">Cognome</label>
+        <input type="text" name="cognome" id="registration-surname" placeholder="Inserisci il tuo cognome" required>
+
+        <label for="registration-username">Username</label>
+        <input type="text" name="username" id="registration-username" placeholder="Inserisci il tuo username" required>
+
+        <label for="registration-password">Password</label>
+        <input type="password" name="password" id="registration-password" placeholder="Inserisci la tua password" aria-describedby="passwordHelpBlock" required>
+        <div id="passwordHelpBlock" class="form-text">
+          La tua password deve essere lunga 8-20 caratteri, contenere lettere e numeri e non deve contenere spazi, caratteri speciali o emoji.
+        </div>
+        <button type="submit">Registrati!</button>
+      </form>
+    </div>
+
+    <div class="container" id="login-container">
+      <h2>Login</h2>
+      <form id="login-form" method="post" action="api/auth/signin">
+        <label for="login-username">Username</label>
+        <input type="text" name="username" id="login-username" placeholder="Inserisci il tuo username" required>
+
+        <label for="login-password">Password</label>
+        <input type="password" name="password" id="login-password" placeholder="Inserisci la tua password" required>
+        <button type="submit">Accedi</button>
+      </form>
+    </div>
+
+    <div class="container hidden" id="auction-container">
+      <h2>Crea un'Asta</h2>
+      <form id="auction-form" method="post" action="api/auctions">
+        <label for="auction-title">Titolo dell'Asta</label>
+        <input type="text" name="titolo_asta" id="auction-title" placeholder="Inserisci il titolo dell'asta" required>
+
+        <label for="auction-description">Descrizione</label>
+        <input type="text" name="desc_asta" id="auction-description" placeholder="Descrizione dell'asta" required>
+
+        <label for="auction-date">Data di scadenza</label>
+        <input type="date" name="scadenza" id="auction-date" required>
+        
+        <label for="auction-price">Offerta di partenza</label>
+        <input type="number" name="offerta_iniziale" id="auction-price" placeholder="Inserisci il prezzo iniziale" min="0" required>
+
+        <button type="submit">Crea Asta</button>
+      </form>
+    </div>
+  </div>
+</body>
+<script>
+  document.getElementById('auction-date').min = new Date().toISOString().split('T')[0];
+</script>
+</html>

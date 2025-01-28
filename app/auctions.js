@@ -24,7 +24,7 @@ router.post('/auctions', verifyToken, async (req, res) => {
     const titolo = await mongo.collection("auctions").findOne({titolo_asta: new RegExp(`^${titolo_asta}$`, 'i')});
 
     if (titolo) {
-      res.status(409).json({msg: "Titolo già in uso"})
+      return res.status(409).json({msg: "Titolo già in uso"})
     } else {
       const last_auction = await mongo.collection("auctions").findOne({}, {sort: {id: -1}} );
       
@@ -38,11 +38,11 @@ router.post('/auctions', verifyToken, async (req, res) => {
 
       const new_auction = {id, proprietario: profiloProprietario.username, titolo_asta, desc_asta, scadenza: result, offerta_iniziale};
       await mongo.collection('auctions').insertOne(new_auction);
-      res.json({msg: "Nuova asta aggiunta con successo!"})
+      return res.status(201).json({msg: "Nuova asta aggiunta con successo!"})
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({msg: "Internal Error"});
+    console.error("Errore:", error);
+    return res.status(500).json({msg: "Internal Error"});
   }
 });
 
@@ -53,10 +53,10 @@ router.get('/auctions/', async (req, res) => {
     const query = req.query.q ? {titolo_asta: { "$regex": req.query.q, "$options": "i" }} : {};
     const cursor = await mongo.collection("auctions").find(query);
     const auctions = await cursor.toArray();
-    res.json(auctions);
+    return res.status(200).json(auctions);
   } catch (error) {
     console.error("Errore:", error);
-    res.status(500).json({ msg: "Errore interno del server" });
+    return res.status(500).json({ msg: "Errore interno del server" });
   }
 });
 
@@ -68,13 +68,13 @@ router.get('/auctions/:id', async (req, res) => {
     const auction = await mongo.collection("auctions").findOne({id: ID});
 
     if (!auction) {
-      res.status(404).json({msg: "Asta non trovata"})
+      return res.status(404).json({msg: "Asta non trovata"})
     }
 
-    res.json(auction)
+    return res.status(200).json(auction)
   } catch (error) {
     console.error("Errore:", error);
-    res.status(500).json({ msg: "Errore interno del server" });
+    return res.status(500).json({ msg: "Errore interno del server" });
   }
 });
 
@@ -100,15 +100,14 @@ router.put('/auctions/:id', verifyToken, async (req, res) => {
 
     
     if (auction.proprietario !== user.username) {
-      console.error('UPSIE')
-      return res.status(405).json({msg: 'Utente non autorizzato alla modifica!'})
+      return res.status(403).json({msg: 'Utente non autorizzato alla modifica!'})
     }
 
     await mongo.collection("auctions").updateOne(query, {$set: updated_auction});
-    res.json({msg: "Auction updated successfully"});
+    return res.status(200).json({msg: "Auction updated successfully"});
   } catch (error) {
     console.error("Errore:", error);
-    res.status(500).json({msg: "Errore interno del server"})
+    return res.status(500).json({msg: "Errore interno del server"})
   }
 });
 
@@ -129,15 +128,14 @@ router.delete('/auctions/:id', verifyToken, async (req, res) => {
     const user = await mongo.collection("users").findOne({id: req.userId})
 
     if (auction.proprietario !== user.username) {
-      console.error('ERRORE')
-      return res.status(405).json({msg: 'Utente non autorizzato alla cancellazione!'})
+      return res.status(403).json({msg: 'Utente non autorizzato alla cancellazione!'})
     }
 
     await mongo.collection("auctions").deleteOne(query);
-    res.json({msg: "Auction deleted successfully"})
+    return res.status(200).json({msg: "Auction deleted successfully"})
   } catch (error) {
     console.error("Errore:", error);
-    res.status(500).json({msg: "Errore interno del server"}) 
+    return res.status(500).json({msg: "Errore interno del server"}) 
   }
 });
 
