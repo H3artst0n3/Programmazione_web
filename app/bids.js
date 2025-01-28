@@ -20,6 +20,10 @@ router.get("/auctions/:id/bids", async (req, res) => {
 });
 
 router.post("/auctions/:id/bids", verifyToken, async (req, res) => {
+  if (req.userId === null) {
+      return res.redirect('/login.html')
+      // res.status(404).json({msg: "Utente no autenticato"})
+  }
   const mongo = await db.connect2db();
   const query = {id: parseInt(req.params.id)};
   const query_asta = {asta: parseInt(req.params.id)};

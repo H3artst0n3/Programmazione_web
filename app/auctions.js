@@ -15,6 +15,10 @@ const isAuctionExpired = (currentDate, auctionEndDate) => {
 
 router.post('/auctions', verifyToken, async (req, res) => {
   try {
+    if (req.userId === null){
+      return res.redirect('/login.html');
+    }
+
     const mongo = await db.connect2db();  
     const {titolo_asta, desc_asta, scadenza, offerta_iniziale} = req.body;
     const titolo = await mongo.collection("auctions").findOne({titolo_asta: new RegExp(`^${titolo_asta}$`, 'i')});
@@ -76,6 +80,10 @@ router.get('/auctions/:id', async (req, res) => {
 
 router.put('/auctions/:id', verifyToken, async (req, res) => {
   try {
+    if (req.userId === null) {
+      return res.redirect('/login.html');
+    }
+
     const mongo = await db.connect2db();
 
     const id = parseInt(req.params.id);
@@ -88,10 +96,12 @@ router.put('/auctions/:id', verifyToken, async (req, res) => {
     const query = {id: id};
 
     const auction = await mongo.collection("auctions").findOne(query);
+    const user = await mongo.collection("users").findOne({id: req.userId});
+
     
-    if (auction.proprietario !== req.userId) {
+    if (auction.proprietario !== user.username) {
       console.error('UPSIE')
-      res.status(405).json({msg: 'Utente non autorizzato alla modifica!'})
+      return res.status(405).json({msg: 'Utente non autorizzato alla modifica!'})
     }
 
     await mongo.collection("auctions").updateOne(query, {$set: updated_auction});
@@ -104,18 +114,23 @@ router.put('/auctions/:id', verifyToken, async (req, res) => {
 
 router.delete('/auctions/:id', verifyToken, async (req, res) => {
   try {
+    if (req.userId === null) {
+      return res.redirect('/login.html');
+    }
     const mongo = await db.connect2db();
     console.log("Connesso al database");
 
     const id = parseInt(req.params.id);
     const query = {id: id};
+    console.log(query)
 
     const auction = await mongo.collection("auctions").findOne(query);
     console.log(auction)
+    const user = await mongo.collection("users").findOne({id: req.userId})
 
-    if (auction.proprietario !== req.userId) {
+    if (auction.proprietario !== user.username) {
       console.error('ERRORE')
-      res.status(405).json({msg: 'Utente non autorizzato alla cancellazione!'})
+      return res.status(405).json({msg: 'Utente non autorizzato alla cancellazione!'})
     }
 
     await mongo.collection("auctions").deleteOne(query);

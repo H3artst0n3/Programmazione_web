@@ -76,8 +76,9 @@ router.get("/whoami", verifyToken, async (req, res) => {
     const query = {id: req.userId}
     const user = await mongo.collection("users").findOne(query);
 
-    if (req.userId == null){
-      return res.status(404).json({ msg: "Utente non loggato" });
+    if (req.userId === null){
+      return res.redirect('/login.html');
+      // return res.status(404).json({ msg: "Utente non loggato" });
     }
 
     if (user) {
