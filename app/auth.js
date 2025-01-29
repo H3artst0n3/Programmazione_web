@@ -39,7 +39,7 @@ router.post('/signup', async (req, res) => {
       const new_user = {id, nome, cognome, username, password};
       await mongo.collection("users").insertOne(new_user);
       
-      return res.status(201).json({msg: "Registrazione effettuata con successo!"});
+      res.status(201).json({msg: "Registrazione effettuata con successo!"});
     }
   } catch (error) {
     console.error("Errore:", error);
@@ -57,7 +57,7 @@ router.post('/signin', async (req, res) => {
       const data = { id: user.id };
       const token = jwt.sign(data, "ssshhh");
       res.cookie("token", token, {httpOnly: true});
-      return res.status(301).redirect('/aste.html')
+      res.status(200).json({ msg: "Login effettuato"})
     } else {
       return res.status(401).json({ msg: "Username o password errati" });
     }
