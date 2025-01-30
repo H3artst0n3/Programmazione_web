@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=0.9">
+  <meta name="viewport" content="width=device-width", initial-scale="1.0">
   <title>Interfaccia Registrazione e Asta</title>
   <link href="assets/css/style.css" rel="stylesheet"/>
   <script src="assets/js/login.js" defer></script>
@@ -12,17 +12,7 @@
 
 </head>
 <body>
-  <!-- <div class="menu">
-    <button onclick="toggleMenu()">☰ Menu</button>
-    <div class="dropdown" id="menu-dropdown">
-      <a href="#" onclick="showSection('registration-container')">Registrazione</a>
-      <a href="#" onclick="showSection('login-container')">Login</a>
-      <a href="#" onclick="showSection('auction-container')">Crea Asta</a>
-      <a href="#" onclick="showAuctions()">Lista Aste</a>
-    </div>
-  </div> -->
-
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="#" onclick="showAuctions()">Aste Online</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
@@ -32,12 +22,16 @@
       
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="#" onclick="showSection('registration-container')">Registrazione</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" onclick="showSection('login-container')">Login</a>
-          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Auteticati!
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" onclick="showSection('registration-container')">Registrazione</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" onclick="showSection('login-container')">Login</a></li>
+            </ul>
+          </li>         
           <li class="nav-item">
             <a class="nav-link" href="#" onclick="showSection('auction-container')">Crea Asta</a>
           </li>
@@ -48,8 +42,8 @@
         
         <!-- Barra di ricerca -->
         <form class="d-flex" role="search" onsubmit="searchAuctions(event)">
-          <input class="form-control me-2" type="search" id="search-bar" placeholder="Cerca un'asta..." aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Cerca</button>
+          <input class="form-control" type="search" id="search-bar" placeholder="Cerca un'asta..." aria-label="Search">
+          <button class="btn btn-outline-success ml-auto" type="submit">Cerca</button>
         </form>
       </div>
     </div>
@@ -73,7 +67,7 @@
         <div id="passwordHelpBlock" class="form-text">
           La tua password deve essere lunga 8-20 caratteri, contenere lettere, numeri e caratteri speciali. Non deve constenere spazi o emoji.
         </div>
-        <button type="submit">Registrati!</button>
+        <button class="button-form" type="submit">Registrati!</button>
       </form>
     </div>
 
@@ -85,7 +79,7 @@
 
         <label for="login-password">Password</label>
         <input type="password" name="password" id="login-password" placeholder="Inserisci la tua password" required>
-        <button type="submit">Accedi</button>
+        <button class="button-form" type="submit">Accedi</button>
       </form>
     </div>
 
@@ -104,7 +98,7 @@
         <label for="auction-price">Offerta di partenza</label>
         <input type="number" name="offerta_iniziale" id="auction-price" placeholder="Inserisci il prezzo iniziale" min="0" required>
 
-        <button type="submit">Crea Asta</button>
+        <button class="button-form" type="submit">Crea Asta</button>
       </form>
     </div>
 

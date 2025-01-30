@@ -1,11 +1,10 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
+  background-color: #CAEFFB !important;
   margin: 0;
   padding: 0;
   display: grid;
   place-items: center;
-  min-height: 100vh;
 }
 
 .grid-container {
@@ -23,10 +22,10 @@ body {
   }
 }
 
-button {
+.button-form {
   padding: 10px !important;
   margin-top: 10px !important;
-  background: #007bff;
+  background: #23A6D1;
   color: #fff;
   border: none;
   border-radius: 5px !important;
@@ -34,45 +33,20 @@ button {
   font-size: 1rem;
 }
 
-button:hover {
+.button-form:hover {
   background: #0056b3;
 }
 
-/* .menu {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+.navbar {
+  background-color: #A0DCF0 !important;
 }
-.menu button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-}
-.dropdown {
-  display: none;
-  position: absolute;
-  background: white;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  overflow: hidden;
-}
-.dropdown a {
-  display: block;
-  padding: 10px;
-  text-decoration: none;
-  color: black;
-}
-.dropdown a:hover {
-  background: #f0f0f0;
-} */
 
 .container {
-  background: #ffffff;
+  background: #e2f5fb;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  margin-top: 60px;
 }
 
 h2 {
@@ -80,7 +54,17 @@ h2 {
   color: #333;
 }
 
-form {
+#login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+#registration-form {
+  display: flex;
+  flex-direction: column;
+}
+
+#auction-form {
   display: flex;
   flex-direction: column;
 }
