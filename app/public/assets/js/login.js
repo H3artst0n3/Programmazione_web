@@ -121,7 +121,6 @@ auctionForm.addEventListener('submit', async function (e) {
         },
         body: JSON.stringify(data)
     });
-
     const result = await response.json();
 
     if (response.ok) {
@@ -129,5 +128,8 @@ auctionForm.addEventListener('submit', async function (e) {
         showAuctions();
     } else {
         alert('Errore: ' + result.msg);
+        
+        loginContainer.classList.remove('hidden');
+        auctionContainer.classList.add('hidden');
     }
 });

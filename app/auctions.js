@@ -16,7 +16,7 @@ const isAuctionExpired = (currentDate, auctionEndDate) => {
 router.post('/auctions', verifyToken, async (req, res) => {
   try {
     if (req.userId === null){
-      return res.redirect('/home.html');
+      return res.status(404).json({msg: "Utente non loggato"})
     }
 
     const mongo = await db.connect2db();  
