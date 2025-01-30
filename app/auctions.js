@@ -16,7 +16,7 @@ const isAuctionExpired = (currentDate, auctionEndDate) => {
 router.post('/auctions', verifyToken, async (req, res) => {
   try {
     if (req.userId === null){
-      return res.redirect('/login.html');
+      return res.redirect('/home.html');
     }
 
     const mongo = await db.connect2db();  
@@ -81,7 +81,7 @@ router.get('/auctions/:id', async (req, res) => {
 router.put('/auctions/:id', verifyToken, async (req, res) => {
   try {
     if (req.userId === null) {
-      return res.redirect('/login.html');
+      return res.redirect('/home.html');
     }
 
     const mongo = await db.connect2db();
@@ -114,7 +114,7 @@ router.put('/auctions/:id', verifyToken, async (req, res) => {
 router.delete('/auctions/:id', verifyToken, async (req, res) => {
   try {
     if (req.userId === null) {
-      return res.redirect('/login.html');
+      return res.redirect('/home.html');
     }
     const mongo = await db.connect2db();
     console.log("Connesso al database");

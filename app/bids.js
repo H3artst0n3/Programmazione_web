@@ -22,7 +22,7 @@ router.get("/auctions/:id/bids", async (req, res) => {
 router.post("/auctions/:id/bids", verifyToken, async (req, res) => {
   try {
     if (req.userId === null) {
-      return res.status(301).redirect('/login.html')
+      return res.status(301).redirect('/home.html')
     }
     
     const mongo = await db.connect2db();
