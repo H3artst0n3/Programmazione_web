@@ -1,7 +1,7 @@
-function toggleMenu() {
-  const menu = document.getElementById("menu-dropdown");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
+// function toggleMenu() {
+//   const menu = document.getElementById("menu-dropdown");
+//   menu.style.display = menu.style.display === "block" ? "none" : "block";
+// }
 
 function showSection(sectionId) {
   document.querySelectorAll('.container').forEach(container => {

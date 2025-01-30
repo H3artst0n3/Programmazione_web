@@ -52,8 +52,12 @@ router.post('/signin', async (req, res) => {
     const mongo = await db.connect2db();
     const { username, password } = req.body;
     const user = await mongo.collection("users").findOne({ username: new RegExp(`^${username}$`, 'i') });
+    
+    if (!user){
+      return res.status(404).json({msg: "Utente non registrato"});
+    }
 
-    if (user && user.password === password && user.username === username) {
+    if (user.password === password && user.username === username) {
       const data = { id: user.id };
       const token = jwt.sign(data, "ssshhh");
       res.cookie("token", token, {httpOnly: true});

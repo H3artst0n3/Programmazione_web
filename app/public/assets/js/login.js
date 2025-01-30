@@ -1,5 +1,6 @@
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('registration-form');
+const auctionForm = document.getElementById('auction-form');
 const auctionContainer = document.getElementById('auction-container');
 const loginContainer = document.getElementById('login-container');
 const registrationContainer = document.getElementById('registration-container');
@@ -97,6 +98,35 @@ registerForm.addEventListener('submit', async function (e) {
     if (response.ok) {
         alert(result.msg);
         registrationContainer.classList.add('hidden');
+        loginContainer.classList.remove('hidden');
+    } else {
+        alert('Errore: ' + result.msg);
+    }
+});
+
+auctionForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const data = {
+        titolo_asta: document.getElementById('auction-title').value,
+        desc_asta: document.getElementById('auction-description').value,
+        scadenza: document.getElementById('auction-date').value,
+        offerta_iniziale: document.getElementById('auction-price').value
+    };
+
+    const response = await fetch(auctionForm.action, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+        alert(result.msg);
+        showAuctions();
     } else {
         alert('Errore: ' + result.msg);
     }
