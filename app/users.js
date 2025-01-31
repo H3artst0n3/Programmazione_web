@@ -5,7 +5,7 @@ const moment = require('moment');
 const db = require("./db.js");
 const router = express.Router();
 
-const asteVinte = async (username) => {
+const asteVinte = async (id, username, nome, cognome) => {
   const mongo = await db.connect2db();
   const current = moment(new Date());
   const date = current.format('DD-MM-YYYY');
@@ -24,7 +24,10 @@ const asteVinte = async (username) => {
   });
 
   const userDetails = {
+    id: id,
     username: username,
+    nome: nome,
+    cognome: cognome,
     asteVinte: asteVinte
   }
 
@@ -38,7 +41,7 @@ router.get('/users/:id', async (req, res) => {
       const id = {id: parseInt(req.params.id)};
       const user = await mongo.collection("users").findOne(id);
 
-      const userDetails = await asteVinte(user.username);
+      const userDetails = await asteVinte(user.id, user.username, user.nome, user.cognome);
 
       res.status(200).json(userDetails);
   } catch (error) {
@@ -58,7 +61,7 @@ router.get('/users/', async (req, res) => {
       const usersDetails = [];
 
       for (const user of users) {
-        const aste = await asteVinte(user.username);
+        const aste = await asteVinte(user.id, user.username, user.nome, user.cognome);
         usersDetails.push(aste);
       }
 
