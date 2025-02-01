@@ -23,18 +23,51 @@ body {
 }
 
 .button-form {
-  padding: 10px !important;
-  margin-top: 10px !important;
+  padding: 10px;
+  margin-top: 10px;
   background: #23A6D1;
   color: #fff;
   border: none;
-  border-radius: 5px !important;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
 }
 
 .button-form:hover {
   background: #0056b3;
+}
+
+.search-button {
+  padding: 10px;
+  margin-left: 5px;
+  background: #23A6D1;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background: #0056b3;
+}
+
+.danger-button {
+  padding: 10px;
+  margin-top: 10px;
+  background: #d12323;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.danger-button:hover {
+  background: #b30000;
+}
+
+.delete-button {
+  width: 100%;
 }
 
 .navbar {
@@ -54,17 +87,10 @@ h2 {
   color: #333;
 }
 
-#login-form {
-  display: flex;
-  flex-direction: column;
-}
-
-#registration-form {
-  display: flex;
-  flex-direction: column;
-}
-
-#auction-form {
+#login-form,
+#registration-form,
+#auction-form,
+#editAuction-form {
   display: flex;
   flex-direction: column;
 }

@@ -20,7 +20,6 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-
 router.post('/signup', async (req, res) => {
   try {
     const mongo = await db.connect2db();

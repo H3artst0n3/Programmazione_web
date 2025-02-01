@@ -81,7 +81,7 @@ router.get('/auctions/:id', async (req, res) => {
 router.put('/auctions/:id', verifyToken, async (req, res) => {
   try {
     if (req.userId === null) {
-      return res.redirect('/home.html');
+      return res.status(404).json({msg: 'Utente non loggato!'})
     }
 
     const mongo = await db.connect2db();
@@ -97,7 +97,6 @@ router.put('/auctions/:id', verifyToken, async (req, res) => {
 
     const auction = await mongo.collection("auctions").findOne(query);
     const user = await mongo.collection("users").findOne({id: req.userId});
-
     
     if (auction.proprietario !== user.username) {
       return res.status(403).json({msg: 'Utente non autorizzato alla modifica!'})

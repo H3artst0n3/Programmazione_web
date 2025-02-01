@@ -79,7 +79,7 @@ router.get("/whoami", verifyToken, async (req, res) => {
     const user = await mongo.collection("users").findOne(query);
 
     if (req.userId === null){
-      return res.status(301).redirect('/home.html');
+      return res.status(404).json({ msg: "Utente non loggato" });
     }
 
     if (user) {

@@ -1,12 +1,18 @@
 const loginForm = document.getElementById("login-form");
 const registerForm = document.getElementById("registration-form");
 const auctionForm = document.getElementById("auction-form");
-const auctionContainer = document.getElementById("auction-container");
-const loginContainer = document.getElementById("login-container");
-const registrationContainer = document.getElementById("registration-container");
-const auctionDate = (document.getElementById("auction-date").min = new Date()
-  .toISOString()
-  .split("T")[0]);
+const editAuctionForm = document.getElementById("editAuction-form");
+const bidsForm = document.getElementById("bids-form");
+
+function showSection(...sectionIds) {
+  document.querySelectorAll(".container").forEach((container) => {
+    container.classList.add("hidden");
+  });
+
+  sectionIds.forEach((id) => {
+    document.getElementById(id)?.classList.remove("hidden");
+  });
+}
 
 loginForm.addEventListener("submit", async function (e) {
   e.preventDefault();
@@ -28,9 +34,7 @@ loginForm.addEventListener("submit", async function (e) {
 
   if (response.ok) {
     alert(result.msg);
-    auctionContainer.classList.remove("hidden");
-    loginContainer.classList.add("hidden");
-    registrationContainer.classList.add("hidden");
+    showSection("auction-container")
   } else {
     alert("Errore: " + result.msg);
   }
@@ -101,8 +105,7 @@ registerForm.addEventListener("submit", async function (e) {
 
   if (response.ok) {
     alert(result.msg);
-    registrationContainer.classList.add("hidden");
-    loginContainer.classList.remove("hidden");
+    showSection("login-container")
   } else {
     alert("Errore: " + result.msg);
   }
@@ -132,18 +135,9 @@ auctionForm.addEventListener("submit", async function (e) {
     showAuctions();
   } else {
     alert("Errore: " + result.msg);
-
-    loginContainer.classList.remove("hidden");
-    auctionContainer.classList.add("hidden");
+    showSection("login-container")
   }
 });
-
-function showSection(sectionId) {
-  document.querySelectorAll(".container").forEach((container) => {
-    container.classList.add("hidden");
-  });
-  document.getElementById(sectionId).classList.remove("hidden");
-}
 
 function showAuctions() {
   showSection("auction-list-container");
@@ -165,30 +159,42 @@ function showAuctions() {
 
 function showAuctionDetails(auctionId) {
   showSection("auction-details-container");
+
   fetch(`api/auctions/${auctionId}`)
     .then((response) => response.json())
     .then((auction) => {
-      const offertaCorrente = auction.offertaCorrente ?? " ";
+
+      fetch(`api/whoami`)
+        .then((response) => response.json())
+        .then((username) => {
+          if (username === auction.proprietario) {
+            showSection("auction-details-container", "editAuction-container")
+          } else {
+            showSection("auction-details-container", "bids-container")
+          }
+        })
+
       const vincitore = auction.vincitore ?? " ";
+      const offertaCorrente = auction.offertaCorrente ?? " ";
 
       const details = document.getElementById("auction-details");
-      details.innerHTML = `<h3>${auction.titolo_asta}</h3>
-                             <p><strong>Proprietario:</strong> ${auction.proprietario}</p>
-                             <p><strong>Offerta iniziale:</strong> €${auction.offerta_iniziale} - <strong>Scadenza:</strong> ${auction.scadenza}<p>
-                             <p><strong>Descrizione:</strong> ${auction.desc_asta}</p>
-                             <p><strong>Offerta corrente:</strong> €${offertaCorrente} - <strong>Vincitore:</strong> ${vincitore}<p>`;
+      details.innerHTML = `<h3 id="auction-title-details">${auction.titolo_asta}</h3>
+                          <p><strong>Proprietario:</strong> ${auction.proprietario}</p>
+                          <p><strong>Offerta iniziale:</strong> €${auction.offerta_iniziale} - <strong>Scadenza:</strong> ${auction.scadenza}<p>
+                          <p><strong>Descrizione:</strong> ${auction.desc_asta}</p>
+                          <p><strong>Offerta corrente:</strong> €${offertaCorrente} - <strong>Vincitore:</strong> ${vincitore}<p>`;
     });
 }
 
 function searchAuctions(event) {
-  event.preventDefault(); // Evita il ricaricamento della pagina
+  event.preventDefault();
   showSection("auction-list-container");
   const searchTerm = document.getElementById("search-bar").value.trim();
   fetch(`/api/auctions/?q=${encodeURIComponent(searchTerm)}`)
     .then((response) => response.json())
     .then((auctions) => {
       const list = document.getElementById("auction-list");
-      list.innerHTML = ""; // Pulisce la lista precedente
+      list.innerHTML = "";
 
       if (auctions.length === 0) {
         list.innerHTML = "<p>Nessuna asta trovata.</p>";
@@ -232,22 +238,150 @@ function showUsersDetails(userId) {
   fetch(`api/users/${userId}`)
     .then((response) => response.json())
     .then((user) => {
-      const asteVinte = user.asteVinte ?? " ";
-      // const prova = asteVinte.map(item => `<li>${item.titolo} - ${item.descrizione} - ${item.prezzoFinale}</li>`).join("");
 
-      const prova = document.createElement("ul");
+      fetch(`/api/whoami`)
+        .then((response) => response.json())
+        .then((username) => {
+          if (!document.getElementById('logout-button')) {
+            if (username === user.username){
+              const item = document.getElementById('users-details-container')
+              item.innerHTML += `<button id='logout-button' class="danger-button" onclick="logout()">Logout</button>`
+            }
+          } else {
+            const button = document.getElementById('logout-button')
+            button.remove();
+          }
+        })
+
+      const asteVinte = user.asteVinte ?? " ";
+      const aste = document.createElement("ul");
+
       asteVinte.forEach((asta) => {
         const item = document.createElement("li");
         item.innerHTML = `<p><strong>Titolo:</strong> ${asta.titolo}</p>
-                            <p>Descrizione: ${asta.descrizione}</p>
-                            <p>Offerta iniziale: €${asta.offertaIniziale} - Prezzo finale: €${asta.prezzoFinale}`;
-        prova.appendChild(item);
+                          <p>Descrizione: ${asta.descrizione}</p>
+                          <p>Offerta iniziale: €${asta.offertaIniziale} - Prezzo finale: €${asta.prezzoFinale}`;
+        aste.appendChild(item);
       });
 
       const details = document.getElementById("users-details");
       details.innerHTML = `<h3>${user.username}</h3>
                             <p><strong>Nome:</strong> ${user.nome} - <strong>Cognome:</strong> ${user.cognome}</p>
                             <p><strong>Aste vinte:</strong></p>`;
-      details.appendChild(prova);
+      details.appendChild(aste);
     });
 }
+
+editAuctionForm.addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const titolo = document.getElementById("auction-title-details").innerHTML;
+
+  const response1 = await fetch(`/api/auctions/?q=${encodeURIComponent(titolo)}`);
+  if (!response1.ok) throw new Error("Errore nel recupero dell'ID dell'asta");
+
+  const auctions = await response1.json();
+  if (auctions.length === 0) throw new Error("Asta non trovata");
+
+  const auctionId = auctions[0].id;
+
+  const data = {
+    titolo_asta: document.getElementById("editAuction-title").value,
+    desc_asta: document.getElementById("editAuction-desc").value,
+  };
+  const response = await fetch(`api/auctions/${auctionId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await response.json()
+
+  if (response.ok) {
+    alert(result.msg);
+    showAuctions();
+  } else {
+    alert("Errore: " + result.msg);
+  }
+});
+
+async function deleteAuction() {
+  const titolo = document.getElementById("auction-title-details").innerHTML;
+
+  const response1 = await fetch(`/api/auctions/?q=${encodeURIComponent(titolo)}`);
+  if (!response1.ok) throw new Error("Errore nel recupero dell'ID dell'asta");
+
+  const auctions = await response1.json();
+  if (auctions.length === 0) throw new Error("Asta non trovata");
+
+  const auctionId = auctions[0].id;
+
+  const response2 = await fetch(`/api/auctions/${auctionId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response2.ok) {
+    const errorMessage = await response2.json();
+    alert(errorMessage.msg)
+  }
+
+  const result = await response2.json();
+  alert(result.msg);
+  showAuctions();
+}
+
+function logout(){
+  fetch(`api/auth/logout`)
+  .then(response => response.json())
+  .then(data => {
+      if (data.msg) {
+          alert(data.msg);
+      } else {
+          alert("Errore durante il logout.");
+      }
+  })
+
+  const button = document.getElementById('logout-button')
+  button.remove()
+}
+
+bidsForm.addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const titolo = document.getElementById("auction-title-details").innerHTML;
+
+  const response1 = await fetch(`/api/auctions/?q=${encodeURIComponent(titolo)}`);
+  if (!response1.ok) throw new Error("Errore nel recupero dell'ID dell'asta");
+
+  const auctions = await response1.json();
+  if (auctions.length === 0) throw new Error("Asta non trovata");
+
+  const auctionId = auctions[0].id;
+
+  const data = {
+    offerta: document.getElementById("bids-price").value,
+  };
+
+  const response = await fetch(`api/auctions/${auctionId}/bids`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  
+  const result = await response.json()
+
+  if (response.ok) {
+    alert(result.msg);
+    showAuctions();
+  } else {
+    alert("Errore: " + result.msg);
+  }
+});
+

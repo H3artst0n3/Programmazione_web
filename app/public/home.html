@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width", initial-scale="1.0">
   <title>Interfaccia Registrazione e Asta</title>
   <link href="assets/css/style.css" rel="stylesheet"/>
-  <script src="assets/js/login.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#" onclick="showAuctions()">Aste Online</a>
+      <a class="navbar-brand" href="#" onclick="showSection('registration-container', 'login-container')">Aste Online</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -22,7 +22,7 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Auteticati!
+              Autenticati!
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="#" onclick="showSection('registration-container')">Registrazione</a></li>
@@ -44,7 +44,7 @@
         <!-- Barra di ricerca -->
         <form class="d-flex" role="search" onsubmit="searchAuctions(event)">
           <input class="form-control" type="search" id="search-bar" placeholder="Cerca un'asta..." aria-label="Search">
-          <button class="btn btn-outline-success ml-auto" type="submit">Cerca</button>
+          <button class="search-button" type="submit">Cerca</button>
         </form>
       </div>
     </div>
@@ -112,6 +112,31 @@
       <h2>Dettagli Asta</h2>
       <div id="auction-details"></div>
       <button class="button-form" onclick="showAuctions()">Torna alla lista</button>
+    </div>
+
+    <div class="container hidden" id="editAuction-container">
+      <h2>Modifica Aste</h2>
+      <form id="editAuction-form">
+        <label for="editAuction-title">Nuovo titolo</label>
+        <input type="text" name="titolo_asta" id="editAuction-title" placeholder="Inserisci il nuovo titolo" required>
+
+        <label for="editAuction-desc">Nuova descrizione</label>
+        <input type="text" name="desc_asta" id="editAuction-desc" placeholder="Inserisci la nuova descrizione" required>
+
+        <button class="button-form" type="submit">Modifica Asta</button>
+      </form>
+      <button class="button-form danger-button delete-button" onclick="deleteAuction()">Elimina Asta</button>
+    </div>
+
+    <div class="container hidden" id="bids-container">
+      <h2>Manda un'offerta!</h2>
+      <form id="bids-form">
+
+        <label for="bids-price">Offerta</label>
+        <input type="number" name="offerta" id="bids-price" placeholder="Inserisci la tua offerta" min="0" required>
+        
+        <button class="button-form" type="submit">Offri!</button>
+      </form>
     </div>
 
     <div class="container hidden" id="users-list-container">
