@@ -113,13 +113,14 @@ router.put('/auctions/:id', verifyToken, async (req, res) => {
 router.delete('/auctions/:id', verifyToken, async (req, res) => {
   try {
     if (req.userId === null) {
-      return res.redirect('/home.html');
+      return res.status(404).json({ msg: "Utente non autenticato!"});
     }
     const mongo = await db.connect2db();
     console.log("Connesso al database");
 
     const id = parseInt(req.params.id);
     const query = {id: id};
+    const query_asta = {asta: id}
     console.log(query)
 
     const auction = await mongo.collection("auctions").findOne(query);
@@ -131,6 +132,7 @@ router.delete('/auctions/:id', verifyToken, async (req, res) => {
     }
 
     await mongo.collection("auctions").deleteOne(query);
+    await mongo.collection("bids").deleteMany(query_asta)
     return res.status(200).json({msg: "Auction deleted successfully"})
   } catch (error) {
     console.error("Errore:", error);

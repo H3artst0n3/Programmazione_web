@@ -7,6 +7,16 @@ body {
   place-items: center;
 }
 
+h3 a,
+p a{
+  color: #0290c0 !important;
+}
+
+h3 a:hover,
+p a:hover{
+  color: #00475f !important;
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: 1fr;
@@ -34,7 +44,7 @@ body {
 }
 
 .button-form:hover {
-  background: #0056b3;
+  background: #176f8c;
 }
 
 .search-button {
@@ -48,7 +58,7 @@ body {
 }
 
 .search-button:hover {
-  background: #0056b3;
+  background: #176f8c;
 }
 
 .danger-button {
@@ -72,6 +82,10 @@ body {
 
 .navbar {
   background-color: #A0DCF0 !important;
+}
+
+.form-control {
+  background-color: #e2f5fb !important;
 }
 
 .container {
@@ -101,11 +115,10 @@ label {
 }
 
 input {
+  background-color: #ecf6f9;
   padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
+  border: 2px solid #CAEFFB;
   border-radius: 5px;
-  font-size: 1rem;
 }
 
 #passwordHelpBlock {

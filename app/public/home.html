@@ -37,7 +37,10 @@
             <a class="nav-link" href="#" onclick="showAuctions()">Lista Aste</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" onclick="showUsers()">Lista utenti</a>
+            <a class="nav-link" href="#" onclick="showUsers()">Lista Utenti</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="whoami()">Profilo</a>
           </li>
         </ul>
         
@@ -128,6 +131,21 @@
       <button class="button-form danger-button delete-button" onclick="deleteAuction()">Elimina Asta</button>
     </div>
 
+    <div class="container hidden" id="users-list-container">
+      <h2>Lista Utenti</h2>
+      <form class="d-flex" role="search" onsubmit="searchUsers(event)">
+        <input class="input" type="search" id="search-user-bar" placeholder="Cerca un utente..." aria-label="Search">
+        <button class="search-button" type="submit">Cerca</button>
+      </form>
+      
+      <ul id="users-list"></ul>
+    </div>
+
+    <div class="container hidden" id="users-details-container">
+      <div id="users-details"></div>
+      <button class="button-form" onclick="showUsers()">Torna alla lista</button>
+    </div>
+
     <div class="container hidden" id="bids-container">
       <h2>Manda un'offerta!</h2>
       <form id="bids-form">
@@ -139,14 +157,14 @@
       </form>
     </div>
 
-    <div class="container hidden" id="users-list-container">
-      <h2>Lista Utenti</h2>
-      <ul id="users-list"></ul>
+    <div class="container hidden" id="bids-list-container"></div>
+
+    <div class="container hidden" id="bids-details-container">
+      <div id="bids-details"></div>
     </div>
 
-    <div class="container hidden" id="users-details-container">
-      <div id="users-details"></div>
-      <button class="button-form" onclick="showUsers()">Torna alla lista</button>
+    <div class="container hidden" id="whoami-container">
+      <div id="whoami-details"></div>
     </div>
   </div>
 </body>

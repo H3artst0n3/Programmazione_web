@@ -83,7 +83,12 @@ router.get("/whoami", verifyToken, async (req, res) => {
     }
 
     if (user) {
-      return res.json(user.username);
+      data = {
+        username: user.username,
+        nome: user.nome,
+        cognome: user.cognome
+      }
+      return res.json(data);
     } else {
       return res.status(404).json({ msg: "Utente non trovato" });
     }

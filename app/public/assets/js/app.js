@@ -150,8 +150,7 @@ function showAuctions() {
         const item = document.createElement("li");
         item.innerHTML = `<h3><a href="#" onclick="showAuctionDetails(${auction.id})">${auction.titolo_asta}</a></h3>
                             <p><strong>Offerta iniziale:</strong> €${auction.offerta_iniziale} - <strong>Scadenza:</strong> ${auction.scadenza}<p>
-                            <p>Descrizione</p>
-                            <p>${auction.desc_asta}</p>`;
+                            <p><strong>Descrizione:</strong> ${auction.desc_asta}</p>`;
         list.appendChild(item);
       });
     });
@@ -166,8 +165,8 @@ function showAuctionDetails(auctionId) {
 
       fetch(`api/whoami`)
         .then((response) => response.json())
-        .then((username) => {
-          if (username === auction.proprietario) {
+        .then((user) => {
+          if (user.username === auction.proprietario) {
             showSection("auction-details-container", "editAuction-container")
           } else {
             showSection("auction-details-container", "bids-container")
@@ -183,6 +182,16 @@ function showAuctionDetails(auctionId) {
                           <p><strong>Offerta iniziale:</strong> €${auction.offerta_iniziale} - <strong>Scadenza:</strong> ${auction.scadenza}<p>
                           <p><strong>Descrizione:</strong> ${auction.desc_asta}</p>
                           <p><strong>Offerta corrente:</strong> €${offertaCorrente} - <strong>Vincitore:</strong> ${vincitore}<p>`;
+
+      const button = document.getElementById('bids-button')
+      if (button){
+        button.remove()
+      }
+
+      if (!(offertaCorrente == " ")) {
+        const item = document.getElementById('auction-details-container')
+        item.innerHTML += `<button id='bids-button' class="button-form" onclick="showBids(${auction.id})">Storico Offerte</button>`
+      }
     });
 }
 
@@ -209,8 +218,7 @@ function searchAuctions(event) {
         item.innerHTML = `<h3><a href="#" onclick="showAuctionDetails(${auction.id})">${auction.titolo_asta}</a></h3>
                             <p><strong>Proprietario:</strong> ${auction.proprietario}</p>
                             <p><strong>Offerta iniziale:</strong> €${auction.offerta_iniziale} - <strong>Scadenza:</strong> ${auction.scadenza}<p>
-                            <p><strong>Descrizione:</strong> ${auction.desc_asta}</p>
-                            <p><strong>Offerta corrente:</strong> €${offertaCorrente} - <strong>Vincitore:</strong> ${vincitore}<p>`;
+                            <p><strong>Descrizione:</strong> ${auction.desc_asta}</p>`
 
         list.appendChild(item);
       });
@@ -239,19 +247,19 @@ function showUsersDetails(userId) {
     .then((response) => response.json())
     .then((user) => {
 
-      fetch(`/api/whoami`)
-        .then((response) => response.json())
-        .then((username) => {
-          if (!document.getElementById('logout-button')) {
-            if (username === user.username){
-              const item = document.getElementById('users-details-container')
-              item.innerHTML += `<button id='logout-button' class="danger-button" onclick="logout()">Logout</button>`
-            }
-          } else {
-            const button = document.getElementById('logout-button')
-            button.remove();
-          }
-        })
+      // fetch(`/api/whoami`)
+      //   .then((response) => response.json())
+      //   .then((whoami) => {
+      //     if (!document.getElementById('logout-button')) {
+      //       if (whoami.username === user.username){
+      //         const item = document.getElementById('users-details-container')
+      //         item.innerHTML += `<button id='logout-button' class="danger-button" onclick="logout()">Logout</button>`
+      //       }
+      //     } else {
+      //       const button = document.getElementById('logout-button')
+      //       button.remove();
+      //     }
+      //   })
 
       const asteVinte = user.asteVinte ?? " ";
       const aste = document.createElement("ul");
@@ -270,6 +278,24 @@ function showUsersDetails(userId) {
                             <p><strong>Aste vinte:</strong></p>`;
       details.appendChild(aste);
     });
+}
+
+function searchUsers(event) {
+  event.preventDefault();
+  showSection("users-list-container");
+  const searchTerm = document.getElementById("search-user-bar").value.trim();
+  fetch(`/api/users/?q=${encodeURIComponent(searchTerm)}`)
+    .then((response) => response.json())
+    .then((users) => {
+      const list = document.getElementById("users-list");
+      list.innerHTML = "";
+      users.forEach((user) => {
+        const item = document.createElement("li");
+        item.innerHTML = `<p><a href="#" onclick="showUsersDetails(${user.id})">${user.username}</a></p>`;
+        list.appendChild(item);
+      })
+    })
+    .catch((error) => console.error("Errore nella ricerca:", error));
 }
 
 editAuctionForm.addEventListener("submit", async function (e) {
@@ -346,8 +372,9 @@ function logout(){
       }
   })
 
-  const button = document.getElementById('logout-button')
-  button.remove()
+  // const button = document.getElementById('logout-button')
+  // button.remove()
+  showSection("login-container")
 }
 
 bidsForm.addEventListener("submit", async function (e) {
@@ -385,3 +412,56 @@ bidsForm.addEventListener("submit", async function (e) {
   }
 });
 
+function showBids(auctionId) {
+  showSection("bids-list-container", "bids-details-container");
+  const list = document.getElementById("bids-list-container");
+  list.innerHTML = `<h2>Lista Offerte</h2>
+                    <ul id="bids-list"></ul>`;
+  fetch(`api/auctions/${auctionId}}/bids`)
+    .then((response) => response.json())
+    .then((bids) => {
+      const list = document.getElementById("bids-list");
+      list.innerHTML = "";
+      bids.forEach((bid) => {
+        const item = document.createElement("li");
+        item.innerHTML = `<p><strong>Offerente:</strong> ${bid.offerente}</p>
+                          <p><strong>Offerta:</strong> €${bid.offerta} - <strong>Data dell'offerta:</strong> ${bid.data}</p>`;
+        list.appendChild(item);
+      });
+
+      if (bids.length > 0) {
+        const winner = bids[bids.length - 1];
+        const winnerContainer = document.getElementById("bids-details-container");
+        winnerContainer.innerHTML = `<h2>Dettagli Vincitore</h2>
+                                     <p><strong>Vincitore:</strong> ${winner.offerente}</p>
+                                     <p><strong>Offerta Vincente:</strong> €${winner.offerta}</p>
+                                     <p><strong>Data dell'offerta:</strong> ${winner.data}</p>`;
+      }
+    });
+
+    const item = document.getElementById('bids-list-container')
+    item.innerHTML += `<button class="button-form" onclick="showAuctionDetails(${auctionId})">Torna all'asta</button>`
+}
+
+function whoami() {
+  showSection("whoami-container")
+  fetch(`/api/whoami`)
+        .then(async (response) => response.json())
+        .then((user) => {
+          if (user.username !== undefined){
+            const item = document.getElementById("whoami-details")
+            item.innerHTML = `<h2>Ciao, ${user.username}!</h2>
+                              <p>Nel caso non dovessi ricordarti i tuoi dati!</p>
+                              <p><strong>Nome:</strong> ${user.nome} - <strong>Cognome:</strong> ${user.cognome}</p>
+                              <p>Se volessi fare il logout pigia il pulsante!</p>
+                              <button id='logout-button' class="danger-button" onclick="logout()">Logout</button>`
+          } else {
+            const item = document.getElementById("whoami-details")
+            item.innerHTML = `<h2>Ciao, utente sconosciuto!</h2>
+                              <p>Se vuoi visualizzare questa pagina devi prima fare il login!</p>`
+          }
+        })
+  if (response.ok) {
+    showSection("whoami-container");
+  }
+}
