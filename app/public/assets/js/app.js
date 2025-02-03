@@ -3,6 +3,7 @@ const registerForm = document.getElementById("registration-form");
 const auctionForm = document.getElementById("auction-form");
 const editAuctionForm = document.getElementById("editAuction-form");
 const bidsForm = document.getElementById("bids-form");
+const auctionDate = document.getElementById('auction-date').min = new Date().toISOString().split('T')[0];
 
 function showSection(...sectionIds) {
   document.querySelectorAll(".container").forEach((container) => {
